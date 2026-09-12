@@ -1,8 +1,15 @@
-from crypto.hashes import md5, sha1
+from crypto.hashes import md5, sha1, sha256
 from crypto.random import generate_secure_u32, generate_secure_u64
 
 
 def main() raises:
+    # SHA-256 Hashing Example
+    print("SHA-256 Hashing:")
+    var sha256_digest = sha256("hello world".as_bytes())
+    print("  Input: 'hello world'")
+    print("  Hex output:", sha256_digest.to_hex())
+    print()
+
     # MD5 Hashing Example
     print("MD5 Hashing:")
     var md5_digest = md5("hello world".as_bytes())

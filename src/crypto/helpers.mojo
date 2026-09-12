@@ -21,3 +21,8 @@ def _to_hex(bytes: List[UInt8]) -> String:
 @always_inline
 def _rotate_left(x: UInt32, n: UInt32) -> UInt32:
     return (x << n) | (x >> (32 - n))
+
+
+@always_inline
+def _rotate_right(x: UInt32, n: UInt32) -> UInt32:
+    return (x >> n) | (x << (32 - n))

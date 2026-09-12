@@ -9,15 +9,15 @@ A Mojo cryptography library intended to cover the commonly used cryptographic al
 
 This repository currently includes:
 
-- MD5 and SHA-1 hash implementations
+- MD5, SHA-1 and SHA-256 hash implementations
 - Secure random integer generation
 
 ## Current Modules
 
-| Module          | Notes                               |
-| --------------- | ----------------------------------- |
-| `crypto.hashes` | MD5 and SHA-1 hashing functions     |
-| `crypto.random` | Secure integer generation functions |
+| Module          | Notes                                    |
+| --------------- | ---------------------------------------- |
+| `crypto.hashes` | MD5, SHA-1 and SHA-256 hashing functions |
+| `crypto.random` | Secure integer generation functions      |
 
 ## Installation
 
@@ -44,14 +44,16 @@ This fetches the latest version and makes it immediately available for import.
 ### Hashing
 
 ```mojo
-from crypto.hashes import md5, sha1
+from crypto.hashes import md5, sha1, sha256
 
 def main() raises:
 	var md5_digest = md5("abc".as_bytes())
 	var sha1_digest = sha1("abc".as_bytes())
+	var sha256_digest = sha256("abc".as_bytes())
 
 	print("MD5:", md5_digest.to_hex())
 	print("SHA-1:", sha1_digest.to_hex())
+	print("SHA-256:", sha256_digest.to_hex())
 ```
 
 ### Random Values
@@ -75,6 +77,10 @@ Compute an MD5 digest for the given bytes.
 #### `sha1(data: Span[UInt8, ...]) -> SHA1Digest`
 
 Compute a SHA-1 digest for the given bytes.
+
+#### `sha256(data: Span[UInt8, ...]) -> SHA256Digest`
+
+Compute a SHA-256 digest for the given bytes.
 
 #### `MD5Digest`
 
@@ -108,6 +114,23 @@ Represents a 160-bit SHA-1 digest.
 var digest = sha1("hello".as_bytes())
 print(digest.to_hex())      # "aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d"
 var bytes = digest.to_bytes()  # List of 20 UInt8 values
+```
+
+#### `SHA256Digest`
+
+Represents a 256-bit SHA-256 digest.
+
+**Methods:**
+
+- `to_hex() -> String` - Returns the digest as a 64-character lowercase hexadecimal string
+- `to_bytes() -> List[UInt8]` - Returns the digest as a list of 32 bytes (big-endian format)
+
+**Example:**
+
+```mojo
+var digest = sha256("hello".as_bytes())
+print(digest.to_hex())      # "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
+var bytes = digest.to_bytes()  # List of 32 UInt8 values
 ```
 
 ### Random

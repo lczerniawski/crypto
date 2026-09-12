@@ -1,0 +1,480 @@
+from crypto.hashes import sha256
+from std.testing import (
+    assert_true,
+    assert_equal,
+    TestSuite,
+)
+
+comptime sha256_empty: List[UInt8] = [
+    0xE3,
+    0xB0,
+    0xC4,
+    0x42,
+    0x98,
+    0xFC,
+    0x1C,
+    0x14,
+    0x9A,
+    0xFB,
+    0xF4,
+    0xC8,
+    0x99,
+    0x6F,
+    0xB9,
+    0x24,
+    0x27,
+    0xAE,
+    0x41,
+    0xE4,
+    0x64,
+    0x9B,
+    0x93,
+    0x4C,
+    0xA4,
+    0x95,
+    0x99,
+    0x1B,
+    0x78,
+    0x52,
+    0xB8,
+    0x55,
+]
+
+comptime sha256_abc: List[UInt8] = [
+    0xBA,
+    0x78,
+    0x16,
+    0xBF,
+    0x8F,
+    0x01,
+    0xCF,
+    0xEA,
+    0x41,
+    0x41,
+    0x40,
+    0xDE,
+    0x5D,
+    0xAE,
+    0x22,
+    0x23,
+    0xB0,
+    0x03,
+    0x61,
+    0xA3,
+    0x96,
+    0x17,
+    0x7A,
+    0x9C,
+    0xB4,
+    0x10,
+    0xFF,
+    0x61,
+    0xF2,
+    0x00,
+    0x15,
+    0xAD,
+]
+
+comptime sha256_quick_brown_fox: List[UInt8] = [
+    0xD7,
+    0xA8,
+    0xFB,
+    0xB3,
+    0x07,
+    0xD7,
+    0x80,
+    0x94,
+    0x69,
+    0xCA,
+    0x9A,
+    0xBC,
+    0xB0,
+    0x08,
+    0x2E,
+    0x4F,
+    0x8D,
+    0x56,
+    0x51,
+    0xE4,
+    0x6D,
+    0x3C,
+    0xDB,
+    0x76,
+    0x2D,
+    0x02,
+    0xD0,
+    0xBF,
+    0x37,
+    0xC9,
+    0xE5,
+    0x92,
+]
+
+comptime sha256_long_message: List[UInt8] = [
+    0x28,
+    0x16,
+    0x59,
+    0x78,
+    0x88,
+    0xE4,
+    0xA0,
+    0xD3,
+    0xA3,
+    0x6B,
+    0x82,
+    0xB8,
+    0x33,
+    0x16,
+    0xAB,
+    0x32,
+    0x68,
+    0x0E,
+    0xB8,
+    0xF0,
+    0x0F,
+    0x8C,
+    0xD3,
+    0xB9,
+    0x04,
+    0xD6,
+    0x81,
+    0x24,
+    0x6D,
+    0x28,
+    0x5A,
+    0x0E,
+]
+
+comptime sha256_a_55: List[UInt8] = [
+    0x9F,
+    0x43,
+    0x90,
+    0xF8,
+    0xD3,
+    0x0C,
+    0x2D,
+    0xD9,
+    0x2E,
+    0xC9,
+    0xF0,
+    0x95,
+    0xB6,
+    0x5E,
+    0x2B,
+    0x9A,
+    0xE9,
+    0xB0,
+    0xA9,
+    0x25,
+    0xA5,
+    0x25,
+    0x8E,
+    0x24,
+    0x1C,
+    0x9F,
+    0x1E,
+    0x91,
+    0x0F,
+    0x73,
+    0x43,
+    0x18,
+]
+
+comptime sha256_a_56: List[UInt8] = [
+    0xB3,
+    0x54,
+    0x39,
+    0xA4,
+    0xAC,
+    0x6F,
+    0x09,
+    0x48,
+    0xB6,
+    0xD6,
+    0xF9,
+    0xE3,
+    0xC6,
+    0xAF,
+    0x0F,
+    0x5F,
+    0x59,
+    0x0C,
+    0xE2,
+    0x0F,
+    0x1B,
+    0xDE,
+    0x70,
+    0x90,
+    0xEF,
+    0x79,
+    0x70,
+    0x68,
+    0x6E,
+    0xC6,
+    0x73,
+    0x8A,
+]
+
+comptime sha256_a_57: List[UInt8] = [
+    0xF1,
+    0x3B,
+    0x2D,
+    0x72,
+    0x46,
+    0x59,
+    0xEB,
+    0x3B,
+    0xF4,
+    0x7F,
+    0x2D,
+    0xD6,
+    0xAF,
+    0x1A,
+    0xCC,
+    0xC8,
+    0x7B,
+    0x81,
+    0xF0,
+    0x9F,
+    0x59,
+    0xF2,
+    0xB7,
+    0x5E,
+    0x5C,
+    0x0B,
+    0xED,
+    0x65,
+    0x89,
+    0xDF,
+    0xE8,
+    0xC6,
+]
+
+comptime sha256_a_64: List[UInt8] = [
+    0xFF,
+    0xE0,
+    0x54,
+    0xFE,
+    0x7A,
+    0xE0,
+    0xCB,
+    0x6D,
+    0xC6,
+    0x5C,
+    0x3A,
+    0xF9,
+    0xB6,
+    0x1D,
+    0x52,
+    0x09,
+    0xF4,
+    0x39,
+    0x85,
+    0x1D,
+    0xB4,
+    0x3D,
+    0x0B,
+    0xA5,
+    0x99,
+    0x73,
+    0x37,
+    0xDF,
+    0x15,
+    0x46,
+    0x68,
+    0xEB,
+]
+
+comptime sha256_a_65: List[UInt8] = [
+    0x63,
+    0x53,
+    0x61,
+    0xC4,
+    0x8B,
+    0xB9,
+    0xEA,
+    0xB1,
+    0x41,
+    0x98,
+    0xE7,
+    0x6E,
+    0xA8,
+    0xAB,
+    0x7F,
+    0x1A,
+    0x41,
+    0x68,
+    0x5D,
+    0x6A,
+    0xD6,
+    0x2A,
+    0xA9,
+    0x14,
+    0x6D,
+    0x30,
+    0x1D,
+    0x4F,
+    0x17,
+    0xEB,
+    0x0A,
+    0xE0,
+]
+
+comptime sha256_zero_bytes_16: List[UInt8] = [
+    0x37,
+    0x47,
+    0x08,
+    0xFF,
+    0xF7,
+    0x71,
+    0x9D,
+    0xD5,
+    0x97,
+    0x9E,
+    0xC8,
+    0x75,
+    0xD5,
+    0x6C,
+    0xD2,
+    0x28,
+    0x6F,
+    0x6D,
+    0x3C,
+    0xF7,
+    0xEC,
+    0x31,
+    0x7A,
+    0x3B,
+    0x25,
+    0x63,
+    0x2A,
+    0xAB,
+    0x28,
+    0xEC,
+    0x37,
+    0xBB,
+]
+
+comptime sha256_all_bytes_16: List[UInt8] = [
+    0xBE,
+    0x45,
+    0xCB,
+    0x26,
+    0x05,
+    0xBF,
+    0x36,
+    0xBE,
+    0xBD,
+    0xE6,
+    0x84,
+    0x84,
+    0x1A,
+    0x28,
+    0xF0,
+    0xFD,
+    0x43,
+    0xC6,
+    0x98,
+    0x50,
+    0xA3,
+    0xDC,
+    0xE5,
+    0xFE,
+    0xDB,
+    0xA6,
+    0x99,
+    0x28,
+    0xEE,
+    0x3A,
+    0x89,
+    0x91,
+]
+
+
+def test_compute_sha256_empty_string() raises:
+    var result = sha256("".as_bytes())
+    assert_equal(result.to_bytes(), materialize[sha256_empty]())
+
+
+def test_compute_sha256_abc() raises:
+    var result = sha256("abc".as_bytes())
+    assert_equal(result.to_bytes(), materialize[sha256_abc]())
+
+
+def test_compute_sha256_quick_brown_fox() raises:
+    var result = sha256(
+        "The quick brown fox jumps over the lazy dog".as_bytes()
+    )
+    assert_equal(result.to_bytes(), materialize[sha256_quick_brown_fox]())
+
+
+def test_compute_sha256_is_deterministic() raises:
+    var first = sha256("hello world".as_bytes())
+    var second = sha256("hello world".as_bytes())
+    assert_equal(first.to_bytes(), second.to_bytes())
+
+
+def test_compute_sha256_changes_for_different_inputs() raises:
+    var first = sha256("hello".as_bytes())
+    var second = sha256("world".as_bytes())
+    assert_true(first.to_bytes() != second.to_bytes())
+
+
+def test_compute_sha256_long_input_spans_multiple_blocks() raises:
+    var result = sha256(("a" * 100).as_bytes())
+    assert_equal(result.to_bytes(), materialize[sha256_long_message]())
+
+
+def test_compute_sha256_padding_boundary_55_bytes() raises:
+    var result = sha256(("a" * 55).as_bytes())
+    assert_equal(result.to_bytes(), materialize[sha256_a_55]())
+
+
+def test_compute_sha256_padding_boundary_56_bytes() raises:
+    var result = sha256(("a" * 56).as_bytes())
+    assert_equal(result.to_bytes(), materialize[sha256_a_56]())
+
+
+def test_compute_sha256_padding_boundary_57_bytes() raises:
+    var result = sha256(("a" * 57).as_bytes())
+    assert_equal(result.to_bytes(), materialize[sha256_a_57]())
+
+
+def test_compute_sha256_padding_boundary_64_bytes() raises:
+    var result = sha256(("a" * 64).as_bytes())
+    assert_equal(result.to_bytes(), materialize[sha256_a_64]())
+
+
+def test_compute_sha256_padding_boundary_65_bytes() raises:
+    var result = sha256(("a" * 65).as_bytes())
+    assert_equal(result.to_bytes(), materialize[sha256_a_65]())
+
+
+def test_compute_sha256_to_hex() raises:
+    var result = sha256("abc".as_bytes())
+    assert_equal(
+        result.to_hex(),
+        "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad",
+    )
+
+
+def test_compute_sha256_zero_bytes_input() raises:
+    var data = List[UInt8]()
+    for _ in range(16):
+        data.append(0x00)
+
+    var result = sha256(data)
+    assert_equal(result.to_bytes(), materialize[sha256_zero_bytes_16]())
+
+
+def test_compute_sha256_all_byte_values_input() raises:
+    var data = List[UInt8]()
+    for i in range(16):
+        data.append(UInt8(i))
+
+    var result = sha256(data)
+    assert_equal(result.to_bytes(), materialize[sha256_all_bytes_16]())
+
+
+def main() raises:
+    TestSuite.discover_tests[__functions_in_module()]().run()
